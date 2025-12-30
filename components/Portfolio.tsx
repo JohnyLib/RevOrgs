@@ -14,7 +14,8 @@ gsap.registerPlugin(ScrollTrigger);
 const PortfolioImage: React.FC<{ 
   project: Project; 
   className?: string;
-}> = ({ project, className = '' }) => {
+  loading?: 'lazy' | 'eager';
+}> = ({ project, className = '', loading = 'lazy' }) => {
   const [imageSrc, setImageSrc] = useState<string>(project.image);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [hasError, setHasError] = useState<boolean>(false);
