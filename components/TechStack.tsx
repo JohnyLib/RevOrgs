@@ -52,22 +52,23 @@ const TechStack: React.FC = () => {
         }
       );
 
-      // Continuous Floating Effect (desktop only)
-      if (!mobile) {
-        itemsRef.current.forEach((item, i) => {
-          if (!item) return;
-          
-          gsap.to(item, {
-            y: "+=10",
-            rotation: "random(-2, 2)",
-            duration: "random(2, 4)",
-            repeat: -1,
-            yoyo: true,
-            ease: "sine.inOut",
-            delay: 0.6 + (i * 0.1)
-          });
-        });
-      }
+      // Continuous Floating Effect (desktop only, disabled for performance)
+      // Disabled to reduce forced reflow and improve performance
+      // if (!mobile) {
+      //   itemsRef.current.forEach((item, i) => {
+      //     if (!item) return;
+      //     
+      //     gsap.to(item, {
+      //       y: "+=10",
+      //       rotation: "random(-2, 2)",
+      //       duration: "random(2, 4)",
+      //       repeat: -1,
+      //       yoyo: true,
+      //       ease: "sine.inOut",
+      //       delay: 0.6 + (i * 0.1)
+      //     });
+      //   });
+      // }
 
     }, sectionRef);
 

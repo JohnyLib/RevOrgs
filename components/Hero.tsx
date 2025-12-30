@@ -32,18 +32,21 @@ const Hero: React.FC = () => {
     const ctx = gsap.context(() => {
       if (!animate || mobile) {
         // No animations or very simple CSS animations for mobile
-        if (textRef.current) {
-          textRef.current.style.opacity = '1';
-          textRef.current.style.transform = 'translateY(0)';
-        }
-        if (subTextRef.current) {
-          subTextRef.current.style.opacity = '1';
-          subTextRef.current.style.transform = 'translateY(0)';
-        }
-        if (buttonsRef.current) {
-          buttonsRef.current.style.opacity = '1';
-          buttonsRef.current.style.transform = 'translateY(0)';
-        }
+        // Batch DOM updates to avoid forced reflow
+        requestAnimationFrame(() => {
+          if (textRef.current) {
+            textRef.current.style.opacity = '1';
+            textRef.current.style.transform = 'translateY(0)';
+          }
+          if (subTextRef.current) {
+            subTextRef.current.style.opacity = '1';
+            subTextRef.current.style.transform = 'translateY(0)';
+          }
+          if (buttonsRef.current) {
+            buttonsRef.current.style.opacity = '1';
+            buttonsRef.current.style.transform = 'translateY(0)';
+          }
+        });
         return;
       }
 

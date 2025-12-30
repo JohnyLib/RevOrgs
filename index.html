@@ -40,69 +40,31 @@
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Preconnect to external domains -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="dns-prefetch" href="https://image.thum.io" />
+    <link rel="dns-prefetch" href="https://images.unsplash.com" />
+    
+    <!-- Preload critical fonts with font-display swap -->
+    <link 
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" 
+      rel="stylesheet"
+      media="print"
+      onload="this.media='all'"
+    />
+    <noscript>
+      <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    </noscript>
+    
+    <!-- Polyfill for process.env -->
     <script>
-      // Polyfill for process.env
       window.process = { env: { NODE_ENV: 'production' } };
-
-      tailwind.config = {
-        theme: {
-          extend: {
-            fontFamily: {
-              sans: ['Manrope', 'sans-serif'],
-            },
-            colors: {
-              brand: {
-                bronze: '#8B5A2B',
-                dark: '#0F0F0F',
-                charcoal: '#1A1A1A',
-                light: '#F5F5F0',
-                accent: '#D4AF37'
-              }
-            }
-          }
-        }
-      }
     </script>
+    <!-- Critical CSS inline for faster rendering -->
     <style>
-      html {
-        scroll-behavior: smooth;
-        scroll-padding-top: 100px;
-      }
-      body {
-        background-color: #0F0F0F;
-        color: #F5F5F0;
-        overflow-x: hidden;
-      }
-      /* Hide scrollbar for Chrome, Safari and Opera */
-      .no-scrollbar::-webkit-scrollbar {
-          display: none;
-      }
-      /* Hide scrollbar for IE, Edge and Firefox */
-      .no-scrollbar {
-          -ms-overflow-style: none;  /* IE and Edge */
-          scrollbar-width: none;  /* Firefox */
-      }
-      /* Performance optimizations */
-      * {
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-      }
-      img {
-        image-rendering: -webkit-optimize-contrast;
-        image-rendering: crisp-edges;
-      }
-      /* Reduce motion for users who prefer it */
-      @media (prefers-reduced-motion: reduce) {
-        *,
-        *::before,
-        *::after {
-          animation-duration: 0.01ms !important;
-          animation-iteration-count: 1 !important;
-          transition-duration: 0.01ms !important;
-        }
-      }
+      html{scroll-behavior:smooth;scroll-padding-top:100px}body{background-color:#0F0F0F;color:#F5F5F0;overflow-x:hidden}*{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
     </style>
   <script type="importmap">
 {
@@ -120,7 +82,7 @@
   }
 }
 </script>
-<link rel="stylesheet" href="/index.css">
+<!-- Main CSS will be injected by Vite -->
 </head>
   <body>
     <div id="root"></div>

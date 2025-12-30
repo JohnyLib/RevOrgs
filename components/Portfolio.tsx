@@ -7,6 +7,7 @@ import { ArrowUpRight, X, ChevronLeft, ChevronRight, Maximize2 } from 'lucide-re
 import { useLanguage } from '../contexts/LanguageContext';
 import { getScreenshotUrl, getScreenshotGallery } from '../utils/screenshot';
 import { shouldAnimate, isMobile } from '../utils/performance';
+import { getOptimizedImageUrl } from '../utils/imageOptimizer';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -16,14 +17,19 @@ const PortfolioImage: React.FC<{
   className?: string;
   loading?: 'lazy' | 'eager';
 }> = ({ project, className = '', loading = 'lazy' }) => {
-  const [imageSrc, setImageSrc] = useState<string>(project.image);
+  // Use optimized image URL
+  const [imageSrc, setImageSrc] = useState<string>(
+    isMobile() 
+      ? getOptimizedImageUrl(project.image, 800, 75) 
+      : project.image
+  );
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [hasError, setHasError] = useState<boolean>(false);
 
   useEffect(() => {
     // On mobile, skip screenshot loading for better performance
     if (isMobile()) {
-      setImageSrc(project.image);
+      setImageSrc(getOptimizedImageUrl(project.image, 800, 75));
       setIsLoading(false);
       return;
     }
@@ -48,8 +54,11 @@ const PortfolioImage: React.FC<{
       
       img.onerror = () => {
         if (isMounted) {
-          // Fallback to original image if screenshot fails
-          setImageSrc(project.image);
+          // Fallback to optimized original image if screenshot fails
+          const fallbackUrl = isMobile() 
+            ? getOptimizedImageUrl(project.image, 800, 75)
+            : project.image;
+          setImageSrc(fallbackUrl);
           setIsLoading(false);
           setHasError(true);
         }
@@ -58,14 +67,17 @@ const PortfolioImage: React.FC<{
       
       img.src = screenshotUrl;
       
-      // Timeout fallback after 3 seconds (reduced from 5)
+      // Timeout fallback after 2 seconds (reduced for better performance)
       timeoutId = setTimeout(() => {
         if (isMounted) {
-          setImageSrc(project.image);
+          const fallbackUrl = isMobile() 
+            ? getOptimizedImageUrl(project.image, 800, 75)
+            : project.image;
+          setImageSrc(fallbackUrl);
           setIsLoading(false);
           setHasError(true);
         }
-      }, 3000);
+      }, 2000);
       
       return () => {
         isMounted = false;
@@ -87,13 +99,20 @@ const PortfolioImage: React.FC<{
         src={imageSrc} 
         alt={project.title}
         loading={loading}
+        decoding="async"
+        fetchpriority={loading === 'eager' ? 'high' : 'auto'}
         className={`${className} ${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
-        onLoad={() => setIsLoading(false)}
+        onLoad={() => {
+          // Use requestAnimationFrame to avoid forced reflow
+          requestAnimationFrame(() => setIsLoading(false));
+        }}
         onError={() => {
           if (!hasError) {
-            setImageSrc(project.image);
-            setHasError(true);
-            setIsLoading(false);
+            requestAnimationFrame(() => {
+              setImageSrc(project.image);
+              setHasError(true);
+              setIsLoading(false);
+            });
           }
         }}
       />
@@ -422,15 +441,23 @@ const ProjectModal: React.FC<ModalProps> = ({ project, onClose }) => {
               </div>
             )}
             <img 
-              src={gallery[currentSlide]} 
+              src={isMobile() ? getOptimizedImageUrl(gallery[currentSlide], 1200, 80) : gallery[currentSlide]} 
               alt={`${project.title} slide ${currentSlide + 1}`}
+              loading="lazy"
+              decoding="async"
               className={`w-full h-full object-cover transition-opacity duration-300 ${imageLoading ? 'opacity-0' : 'opacity-100'}`}
-              onLoad={() => setImageLoading(false)}
+              onLoad={() => {
+                requestAnimationFrame(() => setImageLoading(false));
+              }}
               onError={() => {
                 // Fallback to original gallery image
                 const fallbackGallery = project.gallery || [project.image];
-                setGallery(fallbackGallery);
-                setImageLoading(false);
+                requestAnimationFrame(() => {
+                  setGallery(fallbackGallery.map(img => 
+                    isMobile() ? getOptimizedImageUrl(img, 1200, 80) : img
+                  ));
+                  setImageLoading(false);
+                });
               }}
             />
           </div>
