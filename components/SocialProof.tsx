@@ -3,6 +3,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useLanguage } from '../contexts/LanguageContext';
 import { Star, TrendingUp, Users, Award, Zap } from 'lucide-react';
+import { shouldAnimate, isMobile } from '../utils/performance';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -62,8 +63,18 @@ const SocialProof: React.FC = () => {
   ];
 
   useEffect(() => {
+    const animate = shouldAnimate();
+    const mobile = isMobile();
+
     const ctx = gsap.context(() => {
-      // Stats animation
+      if (!animate || mobile) {
+        // Simple display for mobile
+        gsap.set('.stat-item', { opacity: 1, y: 0, scale: 1 });
+        gsap.set('.testimonial-card', { opacity: 1, x: 0 });
+        return;
+      }
+
+      // Stats animation (desktop only)
       gsap.fromTo('.stat-item', 
         { 
           y: 50, 
@@ -85,7 +96,7 @@ const SocialProof: React.FC = () => {
         }
       );
 
-      // Testimonials animation
+      // Testimonials animation (desktop only)
       gsap.fromTo('.testimonial-card',
         {
           x: (index) => index % 2 === 0 ? -50 : 50,

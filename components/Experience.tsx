@@ -4,6 +4,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { getProcess } from '../constants';
 import { ChevronDown } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
+import { shouldAnimate, isMobile } from '../utils/performance';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -16,9 +17,21 @@ const Experience: React.FC = () => {
   const processSteps = getProcess(lang);
 
   useEffect(() => {
+    const animate = shouldAnimate();
+    const mobile = isMobile();
+
     const ctx = gsap.context(() => {
-      // 1. Line Drawing Animation
-      // The line fills up as we scroll down the section
+      if (!animate || mobile) {
+        // Simple static display for mobile
+        if (lineFillRef.current) {
+          lineFillRef.current.style.height = '100%';
+        }
+        gsap.set('.process-card', { opacity: 1, x: 0 });
+        gsap.set('.step-marker', { y: 0 });
+        return;
+      }
+
+      // 1. Line Drawing Animation (desktop only)
       gsap.fromTo(lineFillRef.current, 
         { height: '0%' },
         {
@@ -26,15 +39,14 @@ const Experience: React.FC = () => {
           ease: 'none',
           scrollTrigger: {
             trigger: containerRef.current,
-            start: 'top center+=100', // Start when section is near middle
+            start: 'top center+=100',
             end: 'bottom center+=100',
             scrub: 0.5,
           }
         }
       );
 
-      // 2. Card Entrance Animations
-      // Cards slide in from left/right depending on their position
+      // 2. Card Entrance Animations (desktop only)
       const cards = gsap.utils.toArray('.process-card');
       cards.forEach((card: any, index) => {
         const isEven = index % 2 === 0;
@@ -51,8 +63,7 @@ const Experience: React.FC = () => {
         });
       });
 
-      // 3. Parallax for center markers
-      // Makes the number markers move slightly slower than scroll
+      // 3. Parallax for center markers (desktop only)
       const markers = gsap.utils.toArray('.step-marker');
       markers.forEach((marker: any) => {
         gsap.to(marker, {
@@ -70,7 +81,7 @@ const Experience: React.FC = () => {
     }, containerRef);
 
     return () => ctx.revert();
-  }, [lang]); // Re-run when language changes
+  }, [lang]);
 
   return (
     <section id="experience" className="py-32 relative bg-brand-dark overflow-hidden" ref={containerRef}>

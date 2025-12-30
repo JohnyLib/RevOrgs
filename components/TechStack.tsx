@@ -1,8 +1,9 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { STACK } from '../constants';
 import { useLanguage } from '../contexts/LanguageContext';
+import { shouldAnimate, isMobile } from '../utils/performance';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -15,7 +16,16 @@ const TechStack: React.FC = () => {
     // Reset refs array
     itemsRef.current = itemsRef.current.slice(0, STACK.length);
 
+    const animate = shouldAnimate();
+    const mobile = isMobile();
+
     const ctx = gsap.context(() => {
+      if (!animate || mobile) {
+        // Simple fade-in for mobile
+        gsap.set(".tech-item", { opacity: 1, y: 0, scale: 1 });
+        return;
+      }
+
       // Clear any existing props to prevent conflicts
       gsap.set(".tech-item", { clearProps: "all" });
 
@@ -42,20 +52,22 @@ const TechStack: React.FC = () => {
         }
       );
 
-      // Continuous Floating Effect
-      itemsRef.current.forEach((item, i) => {
-        if (!item) return;
-        
-        gsap.to(item, {
-          y: "+=10", // relative movement
-          rotation: "random(-2, 2)",
-          duration: "random(2, 4)",
-          repeat: -1,
-          yoyo: true,
-          ease: "sine.inOut",
-          delay: 0.6 + (i * 0.1) // Start after entrance
+      // Continuous Floating Effect (desktop only)
+      if (!mobile) {
+        itemsRef.current.forEach((item, i) => {
+          if (!item) return;
+          
+          gsap.to(item, {
+            y: "+=10",
+            rotation: "random(-2, 2)",
+            duration: "random(2, 4)",
+            repeat: -1,
+            yoyo: true,
+            ease: "sine.inOut",
+            delay: 0.6 + (i * 0.1)
+          });
         });
-      });
+      }
 
     }, sectionRef);
 

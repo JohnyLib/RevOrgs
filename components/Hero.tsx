@@ -1,8 +1,9 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useLanguage } from '../contexts/LanguageContext';
 import { ArrowRight, Sparkles } from 'lucide-react';
+import { shouldAnimate, isMobile } from '../utils/performance';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -16,35 +17,37 @@ const Hero: React.FC = () => {
   const buttonsRef = useRef<HTMLDivElement>(null);
   const { t } = useLanguage();
 
+  const [mounted, setMounted] = useState(false);
+
   useEffect(() => {
-    // Detect mobile device
-    const isMobile = window.innerWidth < 768;
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
+    
+    const animate = shouldAnimate();
+    const mobile = isMobile();
     
     const ctx = gsap.context(() => {
-      const tl = gsap.timeline();
+      if (!animate || mobile) {
+        // No animations or very simple CSS animations for mobile
+        if (textRef.current) {
+          textRef.current.style.opacity = '1';
+          textRef.current.style.transform = 'translateY(0)';
+        }
+        if (subTextRef.current) {
+          subTextRef.current.style.opacity = '1';
+          subTextRef.current.style.transform = 'translateY(0)';
+        }
+        if (buttonsRef.current) {
+          buttonsRef.current.style.opacity = '1';
+          buttonsRef.current.style.transform = 'translateY(0)';
+        }
+        return;
+      }
 
-      // Simplified animations for mobile, full animations for desktop
-      if (isMobile) {
-        // Fast, simple animations for mobile
-        tl.from(textRef.current, {
-          y: 30,
-          opacity: 0,
-          duration: 0.5,
-          ease: "power2.out"
-        })
-        .from(subTextRef.current, {
-          y: 20,
-          opacity: 0,
-          duration: 0.4,
-          ease: "power2.out"
-        }, "-=0.3")
-        .from(buttonsRef.current, {
-          y: 20,
-          opacity: 0,
-          duration: 0.4,
-          ease: "power2.out"
-        }, "-=0.2");
-      } else {
+      const tl = gsap.timeline();
         // Full animations for desktop
         tl.from(lineRef.current, {
           height: 0,
@@ -109,15 +112,17 @@ const Hero: React.FC = () => {
     }, containerRef);
 
     return () => ctx.revert();
-  }, [t]);
+  }, [t, mounted]);
 
   return (
     <section id="home" className="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden" ref={containerRef}>
       {/* Background Ambience - Reduced on mobile */}
-      <div className="absolute top-0 left-0 w-full h-full z-0 pointer-events-none">
-        <div ref={blob1Ref} className="absolute top-[-20%] left-[-10%] w-[300px] h-[300px] md:w-[500px] md:h-[500px] bg-brand-bronze/10 rounded-full blur-[80px] md:blur-[120px]" />
-        <div ref={blob2Ref} className="absolute bottom-[-20%] right-[-10%] w-[300px] h-[300px] md:w-[600px] md:h-[600px] bg-blue-900/10 rounded-full blur-[80px] md:blur-[120px]" />
-      </div>
+      {!isMobile() && (
+        <div className="absolute top-0 left-0 w-full h-full z-0 pointer-events-none">
+          <div ref={blob1Ref} className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] bg-brand-bronze/10 rounded-full blur-[120px]" />
+          <div ref={blob2Ref} className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] bg-blue-900/10 rounded-full blur-[120px]" />
+        </div>
+      )}
 
       <div className="container mx-auto px-6 relative z-10 grid grid-cols-1 md:grid-cols-12 gap-12">
         <div className="hidden md:flex md:col-span-1 justify-center relative">

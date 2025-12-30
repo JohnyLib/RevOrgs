@@ -3,6 +3,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useLanguage } from '../contexts/LanguageContext';
 import { ChevronDown } from 'lucide-react';
+import { shouldAnimate, isMobile } from '../utils/performance';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -55,7 +56,16 @@ const FAQ: React.FC = () => {
   };
 
   useEffect(() => {
+    const animate = shouldAnimate();
+    const mobile = isMobile();
+
     const ctx = gsap.context(() => {
+      if (!animate || mobile) {
+        // Simple display for mobile
+        gsap.set('.faq-item', { opacity: 1, y: 0 });
+        return;
+      }
+
       gsap.fromTo('.faq-item',
         {
           y: 50,

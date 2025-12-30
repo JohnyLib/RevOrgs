@@ -18,6 +18,20 @@ export default defineConfig(({ mode }) => {
         alias: {
           '@': path.resolve(__dirname, '.'),
         }
+      },
+      build: {
+        rollupOptions: {
+          output: {
+            manualChunks: {
+              'gsap': ['gsap'],
+              'vendor': ['react', 'react-dom'],
+            }
+          }
+        },
+        chunkSizeWarningLimit: 1000,
+      },
+      optimizeDeps: {
+        include: ['gsap', 'gsap/ScrollTrigger'],
       }
     };
 });

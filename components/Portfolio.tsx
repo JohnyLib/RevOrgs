@@ -6,6 +6,7 @@ import { Project } from '../types';
 import { ArrowUpRight, X, ChevronLeft, ChevronRight, Maximize2 } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { getScreenshotUrl, getScreenshotGallery } from '../utils/screenshot';
+import { shouldAnimate, isMobile } from '../utils/performance';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -19,7 +20,14 @@ const PortfolioImage: React.FC<{
   const [hasError, setHasError] = useState<boolean>(false);
 
   useEffect(() => {
-    // Try to load screenshot from original link
+    // On mobile, skip screenshot loading for better performance
+    if (isMobile()) {
+      setImageSrc(project.image);
+      setIsLoading(false);
+      return;
+    }
+
+    // Try to load screenshot from original link (desktop only)
     if (project.link) {
       setIsLoading(true);
       setHasError(false);
@@ -49,14 +57,14 @@ const PortfolioImage: React.FC<{
       
       img.src = screenshotUrl;
       
-      // Timeout fallback after 5 seconds
+      // Timeout fallback after 3 seconds (reduced from 5)
       timeoutId = setTimeout(() => {
         if (isMounted) {
           setImageSrc(project.image);
           setIsLoading(false);
           setHasError(true);
         }
-      }, 5000);
+      }, 3000);
       
       return () => {
         isMounted = false;
@@ -77,6 +85,7 @@ const PortfolioImage: React.FC<{
       <img 
         src={imageSrc} 
         alt={project.title}
+        loading={loading}
         className={`${className} ${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
         onLoad={() => setIsLoading(false)}
         onError={() => {
@@ -116,7 +125,20 @@ const Portfolio: React.FC = () => {
     
     isAnimating.current = true;
     
-    // 1. Animate Out
+    const animate = shouldAnimate() && !isMobile();
+    
+    if (!animate) {
+      // Instant update for mobile
+      setActiveCategory(category);
+      const nextProjects = category === 'All' 
+        ? projectsData 
+        : projectsData.filter(project => project.category === category);
+      setDisplayProjects(nextProjects);
+      isAnimating.current = false;
+      return;
+    }
+    
+    // 1. Animate Out (desktop only)
     gsap.to(".portfolio-card", {
       y: 50,
       opacity: 0,
@@ -131,46 +153,54 @@ const Portfolio: React.FC = () => {
           ? projectsData 
           : projectsData.filter(project => project.category === category);
         setDisplayProjects(nextProjects);
-        
-        // Animation lock released after state update triggers useEffect
       }
     });
   };
 
   useEffect(() => {
     // Grid animation on filter change (Animate In)
+    const animate = shouldAnimate();
+    const mobile = isMobile();
+    
     const ctx = gsap.context(() => {
       // Re-query cards as DOM has updated
       const cards = gsap.utils.toArray(".portfolio-card");
       
       if (cards.length > 0) {
-        gsap.fromTo(cards, 
-          { 
-            y: 50, 
-            opacity: 0,
-            scale: 0.95
-          },
-          {
-            y: 0,
-            opacity: 1,
-            scale: 1,
-            duration: 0.5,
-            stagger: 0.05,
-            ease: "power2.out",
-            clearProps: "transform,opacity,visibility", // Important for hover/parallax
-            onComplete: () => {
-              isAnimating.current = false;
-              // Re-initialize ScrollTrigger for new items if needed
-              refreshParallax();
+        if (!animate || mobile) {
+          // Simple display for mobile
+          gsap.set(cards, { opacity: 1, y: 0, scale: 1 });
+          isAnimating.current = false;
+        } else {
+          gsap.fromTo(cards, 
+            { 
+              y: 50, 
+              opacity: 0,
+              scale: 0.95
+            },
+            {
+              y: 0,
+              opacity: 1,
+              scale: 1,
+              duration: 0.5,
+              stagger: 0.05,
+              ease: "power2.out",
+              clearProps: "transform,opacity,visibility",
+              onComplete: () => {
+                isAnimating.current = false;
+                refreshParallax();
+              }
             }
-          }
-        );
+          );
+        }
       } else {
         isAnimating.current = false;
       }
 
       function refreshParallax() {
-        // Parallax Effect for Images
+        // Parallax Effect for Images (desktop only)
+        if (isMobile() || !shouldAnimate()) return;
+        
         const parallaxWrappers = gsap.utils.toArray('.parallax-wrapper');
         
         parallaxWrappers.forEach((wrapper: any) => {
@@ -180,7 +210,7 @@ const Portfolio: React.FC = () => {
                yPercent: 10,
                ease: "none",
                scrollTrigger: {
-                 trigger: wrapper.parentElement, // The overflow-hidden container
+                 trigger: wrapper.parentElement,
                  start: "top bottom",
                  end: "bottom top",
                  scrub: true
@@ -248,8 +278,8 @@ const Portfolio: React.FC = () => {
               {/* Image Container with Parallax Structure */}
               <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-gray-200 mb-4 shadow-lg border border-transparent group-hover:border-brand-bronze/50 transition-all duration-300">
                 
-                {/* Parallax Wrapper - Moves up/down */}
-                <div className="parallax-wrapper w-full h-[120%] -mt-[10%] relative">
+                {/* Parallax Wrapper - Moves up/down (desktop only) */}
+                <div className={`parallax-wrapper w-full ${isMobile() ? 'h-full' : 'h-[120%] -mt-[10%]'} relative`}>
                   <PortfolioImage 
                     project={project}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"

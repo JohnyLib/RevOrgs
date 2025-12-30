@@ -1,15 +1,24 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, lazy, Suspense } from 'react';
 import { Route, Switch, useLocation } from "wouter";
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
-import TechStack from './components/TechStack';
-import Experience from './components/Experience';
-import SocialProof from './components/SocialProof';
-import Portfolio from './components/Portfolio';
-import FAQ from './components/FAQ';
-import Contact from './components/Contact';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { Lang } from './translations';
+
+// Lazy load components for better performance
+const TechStack = lazy(() => import('./components/TechStack'));
+const Experience = lazy(() => import('./components/Experience'));
+const SocialProof = lazy(() => import('./components/SocialProof'));
+const Portfolio = lazy(() => import('./components/Portfolio'));
+const FAQ = lazy(() => import('./components/FAQ'));
+const Contact = lazy(() => import('./components/Contact'));
+
+// Loading fallback component
+const LoadingFallback: React.FC = () => (
+  <div className="min-h-[400px] flex items-center justify-center">
+    <div className="w-8 h-8 border-2 border-brand-bronze border-t-transparent rounded-full animate-spin"></div>
+  </div>
+);
 
 const MainLayout: React.FC<{ lang: Lang }> = ({ lang }) => {
   return (
@@ -29,12 +38,24 @@ const MainLayout: React.FC<{ lang: Lang }> = ({ lang }) => {
         
         <main>
           <Hero />
-          <TechStack />
-          <SocialProof />
-          <Experience />
-          <Portfolio />
-          <FAQ />
-          <Contact />
+          <Suspense fallback={<LoadingFallback />}>
+            <TechStack />
+          </Suspense>
+          <Suspense fallback={<LoadingFallback />}>
+            <SocialProof />
+          </Suspense>
+          <Suspense fallback={<LoadingFallback />}>
+            <Experience />
+          </Suspense>
+          <Suspense fallback={<LoadingFallback />}>
+            <Portfolio />
+          </Suspense>
+          <Suspense fallback={<LoadingFallback />}>
+            <FAQ />
+          </Suspense>
+          <Suspense fallback={<LoadingFallback />}>
+            <Contact />
+          </Suspense>
         </main>
       </div>
     </LanguageProvider>
