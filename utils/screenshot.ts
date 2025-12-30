@@ -1,59 +1,28 @@
 /**
- * Utility functions for generating real-time website screenshots
- */
-
-/**
- * Generates a screenshot URL from a website link using a screenshot service
- * @param url - The website URL to screenshot
- * @param width - Screenshot width (default: 1200)
- * @param height - Screenshot height (default: 800)
+ * Generate screenshot URL from project link using image.thum.io
+ * @param url - Project URL
+ * @param width - Screenshot width
+ * @param height - Screenshot height
  * @returns Screenshot URL
  */
-export const getScreenshotUrl = (
-  url: string,
-  width: number = 1200,
-  height: number = 800
-): string => {
-  if (!url) return '';
-  
-  // Encode the URL
-  const encodedUrl = encodeURIComponent(url);
-  
-  // Using image.thum.io service (free tier available)
-  // Alternative: You can use other services like screenshotapi.net, urlbox.io, etc.
-  return `https://image.thum.io/get/width/${width}/height/${height}/noanimate/${url}`;
+export const getScreenshotUrl = (url: string, width: number, height: number): string => {
+  // Using image.thum.io for screenshots (free tier available)
+  // Alternative services: screenshotapi.net, urlbox.io
+  return `https://image.thum.io/get/width/${width}/height/${height}/crop/true/noanimate/noads/${url}`;
 };
 
 /**
- * Generates multiple screenshot URLs for a gallery
- * @param baseUrl - The base website URL
- * @param count - Number of screenshots to generate (default: 3)
+ * Generate multiple screenshot URLs for gallery
+ * @param url - Project URL
+ * @param count - Number of screenshots to generate
  * @returns Array of screenshot URLs
  */
-export const getScreenshotGallery = (
-  baseUrl: string,
-  count: number = 3
-): string[] => {
-  if (!baseUrl) return [];
-  
-  // Generate variations by adding different paths or query params
-  // For now, we'll use the same URL but you can customize this
-  return Array.from({ length: count }, () => getScreenshotUrl(baseUrl));
-};
-
-/**
- * Alternative screenshot service using screenshotapi.net
- * Requires API key - uncomment and add your API key if needed
- */
-export const getScreenshotUrlAlt = (
-  url: string,
-  apiKey?: string,
-  width: number = 1200,
-  height: number = 800
-): string => {
-  if (!url || !apiKey) return '';
-  
-  const encodedUrl = encodeURIComponent(url);
-  return `https://api.screenshotapi.net/screenshot?url=${encodedUrl}&width=${width}&height=${height}&apiKey=${apiKey}`;
+export const getScreenshotGallery = (url: string, count: number): string[] => {
+  const screenshots: string[] = [];
+  for (let i = 0; i < count; i++) {
+    // Generate screenshots with same dimensions for gallery
+    screenshots.push(getScreenshotUrl(url, 1200, 800));
+  }
+  return screenshots;
 };
 

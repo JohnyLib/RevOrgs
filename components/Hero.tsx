@@ -51,66 +51,65 @@ const Hero: React.FC = () => {
       }
 
       const tl = gsap.timeline();
-        // Full animations for desktop
-        tl.from(lineRef.current, {
-          height: 0,
-          duration: 1,
-          ease: "power3.inOut"
-        })
-        .from(textRef.current, {
-          y: 100,
-          opacity: 0,
-          duration: 1,
-          ease: "power3.out",
-          skewY: 5
-        }, "-=0.5")
-        .from(subTextRef.current, {
-          y: 20,
-          opacity: 0,
-          duration: 0.8,
-          ease: "power2.out"
-        }, "-=0.5")
-        .from(buttonsRef.current, {
-          y: 30,
-          opacity: 0,
-          duration: 0.8,
-          ease: "power2.out"
-        }, "-=0.3");
+      // Full animations for desktop
+      tl.from(lineRef.current, {
+        height: 0,
+        duration: 1,
+        ease: "power3.inOut"
+      })
+      .from(textRef.current, {
+        y: 100,
+        opacity: 0,
+        duration: 1,
+        ease: "power3.out",
+        skewY: 5
+      }, "-=0.5")
+      .from(subTextRef.current, {
+        y: 20,
+        opacity: 0,
+        duration: 0.8,
+        ease: "power2.out"
+      }, "-=0.5")
+      .from(buttonsRef.current, {
+        y: 30,
+        opacity: 0,
+        duration: 0.8,
+        ease: "power2.out"
+      }, "-=0.3");
 
-        // Parallax Effects (desktop only)
-        gsap.to(blob1Ref.current, {
-          yPercent: 30,
-          ease: "none",
-          scrollTrigger: {
-            trigger: containerRef.current,
-            start: "top top",
-            end: "bottom top",
-            scrub: true
-          }
-        });
+      // Parallax Effects (desktop only)
+      gsap.to(blob1Ref.current, {
+        yPercent: 30,
+        ease: "none",
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: "top top",
+          end: "bottom top",
+          scrub: true
+        }
+      });
 
-        gsap.to(blob2Ref.current, {
-          yPercent: -20,
-          ease: "none",
-          scrollTrigger: {
-            trigger: containerRef.current,
-            start: "top top",
-            end: "bottom top",
-            scrub: true
-          }
-        });
+      gsap.to(blob2Ref.current, {
+        yPercent: -20,
+        ease: "none",
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: "top top",
+          end: "bottom top",
+          scrub: true
+        }
+      });
 
-        gsap.to(textRef.current, {
-          yPercent: 20,
-          ease: "none",
-          scrollTrigger: {
-            trigger: containerRef.current,
-            start: "top top",
-            end: "bottom top",
-            scrub: true
-          }
-        });
-      }
+      gsap.to(textRef.current, {
+        yPercent: 20,
+        ease: "none",
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: "top top",
+          end: "bottom top",
+          scrub: true
+        }
+      });
 
     }, containerRef);
 
