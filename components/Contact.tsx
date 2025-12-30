@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Mail, ArrowRight, MapPin, AlertCircle, CheckCircle } from 'lucide-react';
+import { Mail, ArrowRight, MapPin, AlertCircle, CheckCircle, Globe, ExternalLink } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
+import emailjs from '@emailjs/browser';
 
 const Contact: React.FC = () => {
   const { t } = useLanguage();
@@ -18,6 +19,14 @@ const Contact: React.FC = () => {
   });
 
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Initialize EmailJS
+  // To set up EmailJS, follow instructions in EMAILJS_SETUP.md
+  // Or use environment variables: VITE_EMAILJS_SERVICE_ID, VITE_EMAILJS_TEMPLATE_ID, VITE_EMAILJS_PUBLIC_KEY
+  const EMAILJS_SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID || 'service_revorgs';
+  const EMAILJS_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID || 'template_revorgs';
+  const EMAILJS_PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY || 'YOUR_PUBLIC_KEY';
 
   const validate = () => {
     let isValid = true;
@@ -45,16 +54,42 @@ const Contact: React.FC = () => {
     return isValid;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (validate()) {
-      // Simulate API call
-      setTimeout(() => {
-        setIsSubmitted(true);
-        setFormData({ name: '', email: '', message: '' });
-        // Reset success message after 5 seconds
-        setTimeout(() => setIsSubmitted(false), 5000);
-      }, 500);
+    if (!validate()) return;
+
+    setIsSubmitting(true);
+
+    try {
+      // Send email using EmailJS
+      const templateParams = {
+        from_name: formData.name,
+        from_email: formData.email,
+        message: formData.message,
+        to_email: 'perevalov.johny@gmail.com', // Your email
+      };
+
+      await emailjs.send(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID,
+        templateParams,
+        EMAILJS_PUBLIC_KEY
+      );
+
+      setIsSubmitted(true);
+      setFormData({ name: '', email: '', message: '' });
+      setTimeout(() => setIsSubmitted(false), 5000);
+    } catch (error) {
+      console.error('Failed to send email:', error);
+      // Fallback: open mailto link
+      const subject = encodeURIComponent(`Contact from ${formData.name}`);
+      const body = encodeURIComponent(`From: ${formData.email}\n\nMessage:\n${formData.message}`);
+      window.location.href = `mailto:perevalov.johny@gmail.com?subject=${subject}&body=${body}`;
+      setIsSubmitted(true);
+      setFormData({ name: '', email: '', message: '' });
+      setTimeout(() => setIsSubmitted(false), 5000);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -84,11 +119,43 @@ const Contact: React.FC = () => {
                 </div>
                 hello@revorgs.com
               </a>
+              <a href="mailto:perevalov.johny@gmail.com" className="flex items-center gap-4 text-xl text-gray-400 hover:text-brand-bronze transition-colors group">
+                <div className="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center group-hover:bg-brand-bronze group-hover:border-brand-bronze transition-all">
+                  <Mail size={18} />
+                </div>
+                perevalov.johny@gmail.com
+              </a>
               <div className="flex items-center gap-4 text-xl text-gray-400">
                 <div className="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center">
-                  <MapPin size={20} />
+                  <Globe size={20} />
                 </div>
-                San Francisco, CA
+                <span>{t.contact.worldwide}</span>
+              </div>
+              
+              {/* Platform Links - Update with your actual profile URLs */}
+              <div className="mt-4">
+                <p className="text-sm text-gray-500 mb-3">{t.contact.platforms}:</p>
+                <div className="flex gap-4">
+                  <a 
+                    href="https://www.fiverr.com/your-profile" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-all group"
+                  >
+                    <span className="text-sm font-medium">Fiverr</span>
+                    <ExternalLink size={14} className="opacity-50 group-hover:opacity-100" />
+                  </a>
+                  <a 
+                    href="https://www.upwork.com/freelancers/your-profile" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-all group"
+                  >
+                    <span className="text-sm font-medium">Upwork</span>
+                    <ExternalLink size={14} className="opacity-50 group-hover:opacity-100" />
+                  </a>
+                </div>
+                <p className="text-xs text-gray-600 mt-2">⚠️ Update Fiverr and Upwork URLs in Contact.tsx</p>
               </div>
             </div>
           </div>
@@ -181,9 +248,11 @@ const Contact: React.FC = () => {
 
                 <button 
                   type="submit"
-                  className="w-full bg-brand-bronze text-white font-bold py-4 rounded-lg hover:bg-amber-700 transition-colors flex items-center justify-center gap-2 group"
+                  disabled={isSubmitting}
+                  className="w-full bg-brand-bronze text-white font-bold py-4 rounded-lg hover:bg-amber-700 transition-colors flex items-center justify-center gap-2 group disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {t.contact.form.submit} <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+                  {isSubmitting ? 'Sending...' : t.contact.form.submit} 
+                  {!isSubmitting && <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />}
                 </button>
               </form>
             )}

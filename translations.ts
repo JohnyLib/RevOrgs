@@ -92,7 +92,9 @@ export const translations = {
     contact: {
       titlePre: "Let's build something",
       titleHighlight: "legendary.",
-      subtitle: "Ready to transform your digital presence? We are currently accepting new partnerships for Q4 2024.",
+      subtitle: "Ready to transform your digital presence? We work worldwide and are currently accepting new partnerships.",
+      worldwide: "We work worldwide",
+      platforms: "Find us on",
       form: {
         name: "Name",
         namePh: "John Doe",
@@ -203,7 +205,9 @@ export const translations = {
     contact: {
       titlePre: "Hai să construim ceva",
       titleHighlight: "legendar.",
-      subtitle: "Gata să îți transformi prezența digitală? Acceptăm noi parteneriate pentru T4 2024.",
+      subtitle: "Gata să îți transformi prezența digitală? Lucrăm la nivel mondial și acceptăm noi parteneriate.",
+      worldwide: "Lucrăm la nivel mondial",
+      platforms: "Găsește-ne pe",
       form: {
         name: "Nume",
         namePh: "Ion Popescu",
@@ -314,7 +318,9 @@ export const translations = {
     contact: {
       titlePre: "Давайте создадим что-то",
       titleHighlight: "легендарное.",
-      subtitle: "Готовы трансформировать ваше цифровое присутствие? Мы принимаем новые заявки на 4 квартал 2024 года.",
+      subtitle: "Готовы трансформировать ваше цифровое присутствие? Мы работаем по всему миру и принимаем новые заявки.",
+      worldwide: "Мы работаем по всему миру",
+      platforms: "Найдите нас на",
       form: {
         name: "Имя",
         namePh: "Иван Иванов",
