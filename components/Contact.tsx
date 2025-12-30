@@ -137,7 +137,7 @@ const Contact: React.FC = () => {
                 <p className="text-sm text-gray-500 mb-3">{t.contact.platforms}:</p>
                 <div className="flex gap-4">
                   <a 
-                    href="https://www.fiverr.com/your-profile" 
+                    href="https://www.fiverr.com/s/DBZY1wX" 
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-all group"
@@ -146,7 +146,7 @@ const Contact: React.FC = () => {
                     <ExternalLink size={14} className="opacity-50 group-hover:opacity-100" />
                   </a>
                   <a 
-                    href="https://www.upwork.com/freelancers/your-profile" 
+                    href="https://www.upwork.com/freelancers/~01170de52b582130bb?mp_source=share" 
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-all group"
@@ -155,7 +155,6 @@ const Contact: React.FC = () => {
                     <ExternalLink size={14} className="opacity-50 group-hover:opacity-100" />
                   </a>
                 </div>
-                <p className="text-xs text-gray-600 mt-2">⚠️ Update Fiverr and Upwork URLs in Contact.tsx</p>
               </div>
             </div>
           </div>
