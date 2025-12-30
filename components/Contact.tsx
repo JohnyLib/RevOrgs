@@ -123,7 +123,7 @@ const Contact: React.FC = () => {
                 <div className="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center group-hover:bg-brand-bronze group-hover:border-brand-bronze transition-all">
                   <Mail size={18} />
                 </div>
-                perevalov.johny@gmail.com
+                perevalov.johny2@gmail.com
               </a>
               <div className="flex items-center gap-4 text-xl text-gray-400">
                 <div className="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center">
