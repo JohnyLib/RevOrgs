@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import RevOrgsLogo from './RevOrgsLogo';
 import { useLanguage } from '../contexts/LanguageContext';
+import { Menu, X } from 'lucide-react';
 
 const Navbar: React.FC = () => {
   const [scrolled, setScrolled] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { t, lang, setLang } = useLanguage();
 
   useEffect(() => {
@@ -18,17 +20,43 @@ const Navbar: React.FC = () => {
     const element = document.getElementById(id);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
+      setMobileMenuOpen(false); // Close mobile menu after navigation
     }
   };
 
+  // Close mobile menu on scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      if (mobileMenuOpen) {
+        setMobileMenuOpen(false);
+      }
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [mobileMenuOpen]);
+
+  // Prevent body scroll when mobile menu is open
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [mobileMenuOpen]);
+
   return (
-    <nav className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${scrolled ? 'bg-brand-dark/80 backdrop-blur-md py-4 border-b border-white/5' : 'bg-transparent py-6'}`}>
-      <div className="container mx-auto px-6 flex justify-between items-center">
-        <div onClick={() => scrollToSection('home')} className="cursor-pointer block">
-          <RevOrgsLogo className="h-10 w-auto text-brand-bronze" />
-        </div>
-        
-        <div className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-300">
+    <>
+      <nav className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${scrolled ? 'bg-brand-dark/80 backdrop-blur-md py-4 border-b border-white/5' : 'bg-transparent py-6'}`}>
+        <div className="container mx-auto px-6 flex justify-between items-center">
+          <div onClick={() => scrollToSection('home')} className="cursor-pointer block">
+            <RevOrgsLogo className="h-10 w-auto text-brand-bronze" />
+          </div>
+          
+          {/* Desktop Menu */}
+          <div className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-300">
           <button onClick={() => scrollToSection('home')} className="hover:text-brand-bronze transition-colors">{t.nav.home}</button>
           
           <button onClick={() => scrollToSection('tech')} className="hover:text-brand-bronze transition-colors">{t.nav.stack}</button>
@@ -65,9 +93,129 @@ const Navbar: React.FC = () => {
               RU
             </button>
           </div>
+          
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden p-2 text-gray-300 hover:text-white transition-colors"
+            aria-label="Toggle menu"
+          >
+            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
+      </nav>
+
+      {/* Mobile Menu Overlay */}
+      <div
+        className={`fixed inset-0 z-40 md:hidden transition-all duration-300 ${
+          mobileMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
+        }`}
+        onClick={() => setMobileMenuOpen(false)}
+      >
+        <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
+      </div>
+
+      {/* Mobile Menu */}
+      <div
+        className={`fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-brand-dark border-l border-white/10 z-50 md:hidden transform transition-transform duration-300 ease-in-out ${
+          mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
+        }`}
+      >
+        <div className="flex flex-col h-full">
+          {/* Mobile Menu Header */}
+          <div className="flex items-center justify-between p-6 border-b border-white/10">
+            <RevOrgsLogo className="h-8 w-auto text-brand-bronze" showText={true} />
+            <button
+              onClick={() => setMobileMenuOpen(false)}
+              className="p-2 text-gray-300 hover:text-white transition-colors"
+              aria-label="Close menu"
+            >
+              <X size={24} />
+            </button>
+          </div>
+
+          {/* Mobile Menu Navigation */}
+          <nav className="flex-1 overflow-y-auto p-6 space-y-4">
+            <button
+              onClick={() => scrollToSection('home')}
+              className="w-full text-left px-4 py-3 text-lg font-medium text-gray-300 hover:text-brand-bronze hover:bg-white/5 rounded-lg transition-all"
+            >
+              {t.nav.home}
+            </button>
+            <button
+              onClick={() => scrollToSection('tech')}
+              className="w-full text-left px-4 py-3 text-lg font-medium text-gray-300 hover:text-brand-bronze hover:bg-white/5 rounded-lg transition-all"
+            >
+              {t.nav.stack}
+            </button>
+            <button
+              onClick={() => scrollToSection('experience')}
+              className="w-full text-left px-4 py-3 text-lg font-medium text-gray-300 hover:text-brand-bronze hover:bg-white/5 rounded-lg transition-all"
+            >
+              {t.nav.experience}
+            </button>
+            <button
+              onClick={() => scrollToSection('portfolio')}
+              className="w-full text-left px-4 py-3 text-lg font-medium text-gray-300 hover:text-brand-bronze hover:bg-white/5 rounded-lg transition-all"
+            >
+              {t.nav.portfolio}
+            </button>
+            <button
+              onClick={() => scrollToSection('contact')}
+              className="w-full text-left px-4 py-3 text-lg font-bold text-white bg-brand-bronze hover:bg-amber-700 rounded-lg transition-all"
+            >
+              {t.nav.cta}
+            </button>
+
+            {/* Language Switcher in Mobile Menu */}
+            <div className="pt-6 mt-6 border-t border-white/10">
+              <p className="px-4 mb-3 text-sm text-gray-500 uppercase tracking-wider">Language</p>
+              <div className="flex flex-col gap-2">
+                <button
+                  onClick={() => {
+                    setLang('en');
+                    setMobileMenuOpen(false);
+                  }}
+                  className={`w-full text-left px-4 py-3 rounded-lg transition-all ${
+                    lang === 'en'
+                      ? 'bg-brand-bronze/20 text-brand-bronze border border-brand-bronze/50'
+                      : 'text-gray-300 hover:text-white hover:bg-white/5'
+                  }`}
+                >
+                  English (EN)
+                </button>
+                <button
+                  onClick={() => {
+                    setLang('rom');
+                    setMobileMenuOpen(false);
+                  }}
+                  className={`w-full text-left px-4 py-3 rounded-lg transition-all ${
+                    lang === 'rom'
+                      ? 'bg-brand-bronze/20 text-brand-bronze border border-brand-bronze/50'
+                      : 'text-gray-300 hover:text-white hover:bg-white/5'
+                  }`}
+                >
+                  Română (RO)
+                </button>
+                <button
+                  onClick={() => {
+                    setLang('ru');
+                    setMobileMenuOpen(false);
+                  }}
+                  className={`w-full text-left px-4 py-3 rounded-lg transition-all ${
+                    lang === 'ru'
+                      ? 'bg-brand-bronze/20 text-brand-bronze border border-brand-bronze/50'
+                      : 'text-gray-300 hover:text-white hover:bg-white/5'
+                  }`}
+                >
+                  Русский (RU)
+                </button>
+              </div>
+            </div>
+          </nav>
         </div>
       </div>
-    </nav>
+    </>
   );
 };
 

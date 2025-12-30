@@ -17,82 +17,106 @@ const Hero: React.FC = () => {
   const { t } = useLanguage();
 
   useEffect(() => {
+    // Detect mobile device
+    const isMobile = window.innerWidth < 768;
+    
     const ctx = gsap.context(() => {
       const tl = gsap.timeline();
 
-      // Intro Animation
-      tl.from(lineRef.current, {
-        height: 0,
-        duration: 1,
-        ease: "power3.inOut"
-      })
-      .from(textRef.current, {
-        y: 100,
-        opacity: 0,
-        duration: 1,
-        ease: "power3.out",
-        skewY: 5
-      }, "-=0.5")
-      .from(subTextRef.current, {
-        y: 20,
-        opacity: 0,
-        duration: 0.8,
-        ease: "power2.out"
-      }, "-=0.5")
-      .from(buttonsRef.current, {
-        y: 30,
-        opacity: 0,
-        duration: 0.8,
-        ease: "power2.out"
-      }, "-=0.3");
+      // Simplified animations for mobile, full animations for desktop
+      if (isMobile) {
+        // Fast, simple animations for mobile
+        tl.from(textRef.current, {
+          y: 30,
+          opacity: 0,
+          duration: 0.5,
+          ease: "power2.out"
+        })
+        .from(subTextRef.current, {
+          y: 20,
+          opacity: 0,
+          duration: 0.4,
+          ease: "power2.out"
+        }, "-=0.3")
+        .from(buttonsRef.current, {
+          y: 20,
+          opacity: 0,
+          duration: 0.4,
+          ease: "power2.out"
+        }, "-=0.2");
+      } else {
+        // Full animations for desktop
+        tl.from(lineRef.current, {
+          height: 0,
+          duration: 1,
+          ease: "power3.inOut"
+        })
+        .from(textRef.current, {
+          y: 100,
+          opacity: 0,
+          duration: 1,
+          ease: "power3.out",
+          skewY: 5
+        }, "-=0.5")
+        .from(subTextRef.current, {
+          y: 20,
+          opacity: 0,
+          duration: 0.8,
+          ease: "power2.out"
+        }, "-=0.5")
+        .from(buttonsRef.current, {
+          y: 30,
+          opacity: 0,
+          duration: 0.8,
+          ease: "power2.out"
+        }, "-=0.3");
 
-      // Parallax Effects
-      // Move blobs at different speeds
-      gsap.to(blob1Ref.current, {
-        yPercent: 30,
-        ease: "none",
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: "top top",
-          end: "bottom top",
-          scrub: true
-        }
-      });
+        // Parallax Effects (desktop only)
+        gsap.to(blob1Ref.current, {
+          yPercent: 30,
+          ease: "none",
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: "top top",
+            end: "bottom top",
+            scrub: true
+          }
+        });
 
-      gsap.to(blob2Ref.current, {
-        yPercent: -20, // Move opposite direction
-        ease: "none",
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: "top top",
-          end: "bottom top",
-          scrub: true
-        }
-      });
+        gsap.to(blob2Ref.current, {
+          yPercent: -20,
+          ease: "none",
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: "top top",
+            end: "bottom top",
+            scrub: true
+          }
+        });
 
-      // Subtle Text Parallax
-      gsap.to(textRef.current, {
-        yPercent: 20,
-        ease: "none",
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: "top top",
-          end: "bottom top",
-          scrub: true
-        }
-      });
+        gsap.to(textRef.current, {
+          yPercent: 20,
+          ease: "none",
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: "top top",
+            end: "bottom top",
+            scrub: true
+          }
+        });
+      }
 
     }, containerRef);
 
     return () => ctx.revert();
-  }, [t]); // Re-run when language changes
+  }, [t]);
 
   return (
     <section id="home" className="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden" ref={containerRef}>
-      {/* Background Ambience */}
+      {/* Background Ambience - Reduced on mobile */}
       <div className="absolute top-0 left-0 w-full h-full z-0 pointer-events-none">
-        <div ref={blob1Ref} className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] bg-brand-bronze/10 rounded-full blur-[120px]" />
-        <div ref={blob2Ref} className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] bg-blue-900/10 rounded-full blur-[120px]" />
+        <div ref={blob1Ref} className="absolute top-[-20%] left-[-10%] w-[300px] h-[300px] md:w-[500px] md:h-[500px] bg-brand-bronze/10 rounded-full blur-[80px] md:blur-[120px]" />
+        <div ref={blob2Ref} className="absolute bottom-[-20%] right-[-10%] w-[300px] h-[300px] md:w-[600px] md:h-[600px] bg-blue-900/10 rounded-full blur-[80px] md:blur-[120px]" />
       </div>
 
       <div className="container mx-auto px-6 relative z-10 grid grid-cols-1 md:grid-cols-12 gap-12">
@@ -101,38 +125,38 @@ const Hero: React.FC = () => {
         </div>
         
         <div className="col-span-1 md:col-span-11 flex flex-col justify-center">
-          <h1 ref={textRef} className="text-5xl md:text-7xl lg:text-9xl font-bold leading-[1.1] tracking-tight mb-8">
+          <h1 ref={textRef} className="text-4xl sm:text-5xl md:text-7xl lg:text-9xl font-bold leading-[1.1] tracking-tight mb-6 md:mb-8 will-change-transform">
             {t.hero.titlePre} <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-bronze to-amber-200">{t.hero.titleHighlight}</span>
           </h1>
           
           <div className="md:max-w-2xl">
-            <p ref={subTextRef} className="text-xl md:text-2xl text-gray-400 font-light leading-relaxed">
+            <p ref={subTextRef} className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-400 font-light leading-relaxed">
               {t.hero.subtitle}
             </p>
           </div>
 
-          <div ref={buttonsRef} className="mt-12 flex flex-wrap gap-4 relative z-20">
+          <div ref={buttonsRef} className="mt-8 md:mt-12 flex flex-col sm:flex-row flex-wrap gap-3 md:gap-4 relative z-20">
             <a 
               href="#contact" 
-              className="group relative px-8 py-4 bg-brand-bronze text-white font-bold rounded-xl hover:bg-amber-700 transition-all duration-300 flex items-center gap-2 shadow-lg shadow-brand-bronze/30 hover:shadow-brand-bronze/50 hover:scale-105"
+              className="group relative px-6 py-3 md:px-8 md:py-4 bg-brand-bronze text-white font-bold rounded-xl hover:bg-amber-700 active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-brand-bronze/30 hover:shadow-brand-bronze/50 hover:scale-105 text-sm md:text-base"
             >
               <span>{t.hero.ctaPrimary}</span>
-              <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+              <ArrowRight size={18} className="md:w-5 md:h-5 group-hover:translate-x-1 transition-transform" />
               <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-brand-bronze to-amber-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10 blur-xl"></div>
             </a>
             
             <a 
               href="#portfolio" 
-              className="px-8 py-4 bg-white/5 backdrop-blur-sm border border-white/20 text-white font-semibold rounded-xl hover:bg-white/10 hover:border-white/30 transition-all duration-300 flex items-center gap-2"
+              className="px-6 py-3 md:px-8 md:py-4 bg-white/5 backdrop-blur-sm border border-white/20 text-white font-semibold rounded-xl hover:bg-white/10 hover:border-white/30 active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 text-sm md:text-base"
             >
-              <Sparkles size={18} />
+              <Sparkles size={16} className="md:w-[18px] md:h-[18px]" />
               <span>{t.hero.ctaSecondary}</span>
             </a>
             
             <a 
               href="#contact" 
-              className="px-8 py-4 text-gray-300 font-medium rounded-xl hover:text-white transition-colors duration-300 flex items-center gap-2 underline decoration-brand-bronze/50 hover:decoration-brand-bronze underline-offset-4"
+              className="px-6 py-3 md:px-8 md:py-4 text-gray-300 font-medium rounded-xl hover:text-white active:scale-95 transition-colors duration-300 flex items-center justify-center gap-2 underline decoration-brand-bronze/50 hover:decoration-brand-bronze underline-offset-4 text-sm md:text-base"
             >
               {t.hero.ctaConsultation} →
             </a>
