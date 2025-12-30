@@ -57,41 +57,42 @@ const Navbar: React.FC = () => {
           
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-300">
-          <button onClick={() => scrollToSection('home')} className="hover:text-brand-bronze transition-colors">{t.nav.home}</button>
-          
-          <button onClick={() => scrollToSection('tech')} className="hover:text-brand-bronze transition-colors">{t.nav.stack}</button>
+            <button onClick={() => scrollToSection('home')} className="hover:text-brand-bronze transition-colors">{t.nav.home}</button>
+            
+            <button onClick={() => scrollToSection('tech')} className="hover:text-brand-bronze transition-colors">{t.nav.stack}</button>
 
-          <button onClick={() => scrollToSection('experience')} className="hover:text-brand-bronze transition-colors">{t.nav.experience}</button>
+            <button onClick={() => scrollToSection('experience')} className="hover:text-brand-bronze transition-colors">{t.nav.experience}</button>
 
-          <button onClick={() => scrollToSection('portfolio')} className="hover:text-brand-bronze transition-colors">{t.nav.portfolio}</button>
-          
-          <button 
-            onClick={() => scrollToSection('contact')} 
-            className="px-5 py-2 rounded-full border border-white/20 hover:bg-brand-bronze hover:border-brand-bronze hover:text-white transition-all duration-300"
-          >
-            {t.nav.cta}
-          </button>
+            <button onClick={() => scrollToSection('portfolio')} className="hover:text-brand-bronze transition-colors">{t.nav.portfolio}</button>
+            
+            <button 
+              onClick={() => scrollToSection('contact')} 
+              className="px-5 py-2 rounded-full border border-white/20 hover:bg-brand-bronze hover:border-brand-bronze hover:text-white transition-all duration-300"
+            >
+              {t.nav.cta}
+            </button>
 
-          {/* Language Switcher */}
-          <div className="flex items-center border border-white/10 rounded-full px-2 py-1 bg-black/20">
-            <button 
-              onClick={() => setLang('en')}
-              className={`px-2 py-1 rounded-full transition-colors ${lang === 'en' ? 'text-white bg-white/10' : 'text-gray-500 hover:text-white'}`}
-            >
-              EN
-            </button>
-            <button 
-              onClick={() => setLang('rom')}
-              className={`px-2 py-1 rounded-full transition-colors ${lang === 'rom' ? 'text-white bg-white/10' : 'text-gray-500 hover:text-white'}`}
-            >
-              RO
-            </button>
-            <button 
-              onClick={() => setLang('ru')}
-              className={`px-2 py-1 rounded-full transition-colors ${lang === 'ru' ? 'text-white bg-white/10' : 'text-gray-500 hover:text-white'}`}
-            >
-              RU
-            </button>
+            {/* Language Switcher */}
+            <div className="flex items-center border border-white/10 rounded-full px-2 py-1 bg-black/20">
+              <button 
+                onClick={() => setLang('en')}
+                className={`px-2 py-1 rounded-full transition-colors ${lang === 'en' ? 'text-white bg-white/10' : 'text-gray-500 hover:text-white'}`}
+              >
+                EN
+              </button>
+              <button 
+                onClick={() => setLang('rom')}
+                className={`px-2 py-1 rounded-full transition-colors ${lang === 'rom' ? 'text-white bg-white/10' : 'text-gray-500 hover:text-white'}`}
+              >
+                RO
+              </button>
+              <button 
+                onClick={() => setLang('ru')}
+                className={`px-2 py-1 rounded-full transition-colors ${lang === 'ru' ? 'text-white bg-white/10' : 'text-gray-500 hover:text-white'}`}
+              >
+                RU
+              </button>
+            </div>
           </div>
           
           {/* Mobile Menu Button */}
