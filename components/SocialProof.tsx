@@ -200,7 +200,7 @@ const SocialProof: React.FC = () => {
             {t.socialProof.trustedBy}
           </p>
           <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12 opacity-60 hover:opacity-100 transition-opacity">
-            {['Vendi', 'Chirie Auto', 'Himalaya Salt', 'LegalGrup', 'Servicii Juridice'].map((client, index) => (
+            {['Vendi', 'Chirie Auto', 'Himalaya Salt', 'LegalGrup', 'Servicii Juridice', 'VP Trokenbau'].map((client, index) => (
               <div
                 key={index}
                 className="text-2xl font-bold text-gray-500 hover:text-brand-bronze transition-colors cursor-pointer"

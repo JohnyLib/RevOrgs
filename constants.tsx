@@ -122,6 +122,17 @@ export const getPortfolio = (lang: Lang): Project[] => {
       ],
       link: 'https://serviciijuridice.md/',
       year: '2023'
+    },
+    {
+      id: 'vptrokenbau',
+      image: 'https://images.unsplash.com/photo-1541888946428-d63bb8f49f44?q=80&w=2670&auto=format&fit=crop',
+      gallery: [
+        'https://images.unsplash.com/photo-1541888946428-d63bb8f49f44?q=80&w=2670&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2670&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2669&auto=format&fit=crop'
+      ],
+      link: 'https://vptrokenbau.netlify.app/',
+      year: '2024'
     }
   ];
 
@@ -131,21 +142,24 @@ export const getPortfolio = (lang: Lang): Project[] => {
       { title: 'Chirie Auto', category: 'Automotive', client: 'Chirie Auto MD', description: 'A dynamic car rental platform designed for speed and ease of use. Users can browse a diverse fleet and book instantly.', tags: ['Rental System', 'React', 'Booking', 'Mobile First'] },
       { title: 'Himalaya Salt', category: 'E-Commerce', client: 'Himalaya Salt MD', description: 'An elegant e-commerce boutique dedicated to premium Himalayan salt products, emphasizing purity and wellness.', tags: ['E-Commerce', 'Wellness', 'Brand', 'Shopify'] },
       { title: 'LegalGrup', category: 'Corporate', client: 'LegalGrup SRL', description: 'A sophisticated corporate presence for a premier legal firm, establishing authority and trust through detailed service breakdowns.', tags: ['Corporate', 'Legal Tech', 'Multilingual', 'UI/UX'] },
-      { title: 'Servicii Juridice', category: 'Legal Services', client: 'Servicii Juridice', description: 'A user-centric legal portal designed for rapid information retrieval and accessibility.', tags: ['SEO', 'Performance', 'Consulting', 'React'] }
+      { title: 'Servicii Juridice', category: 'Legal Services', client: 'Servicii Juridice', description: 'A user-centric legal portal designed for rapid information retrieval and accessibility.', tags: ['SEO', 'Performance', 'Consulting', 'React'] },
+      { title: 'VP Trokenbau', category: 'Construction', client: 'VP Trokenbau', description: 'A professional construction company website showcasing services, projects, and expertise in the construction industry.', tags: ['Construction', 'Corporate', 'React', 'Modern Design'] }
     ],
     rom: [
       { title: 'Vendi Imobiliare', category: 'Imobiliare', client: 'Vendi', description: 'Un marketplace imobiliar complet care simplifică procesul de cumpărare și închiriere a proprietăților.', tags: ['Marketplace', 'Next.js', 'Hărți', 'Imobiliare'] },
       { title: 'Chirie Auto', category: 'Auto', client: 'Chirie Auto MD', description: 'O platformă dinamică de închirieri auto. Utilizatorii pot naviga printr-o flotă diversă și pot rezerva instantaneu.', tags: ['Sistem Rezervări', 'React', 'Booking', 'Mobile First'] },
       { title: 'Himalaya Salt', category: 'E-Commerce', client: 'Himalaya Salt MD', description: 'Un boutique e-commerce elegant dedicat produselor din sare de Himalaya, punând accent pe puritate și wellness.', tags: ['E-Commerce', 'Wellness', 'Brand', 'Shopify'] },
       { title: 'LegalGrup', category: 'Corporativ', client: 'LegalGrup SRL', description: 'O prezență corporativă sofisticată pentru o firmă de avocatură de top, stabilind autoritate și încredere.', tags: ['Corporativ', 'Legal Tech', 'Multilingv', 'UI/UX'] },
-      { title: 'Servicii Juridice', category: 'Servicii Juridice', client: 'Servicii Juridice', description: 'Un portal juridic centrat pe utilizator, conceput pentru recuperarea rapidă a informațiilor.', tags: ['SEO', 'Performanță', 'Consulting', 'React'] }
+      { title: 'Servicii Juridice', category: 'Servicii Juridice', client: 'Servicii Juridice', description: 'Un portal juridic centrat pe utilizator, conceput pentru recuperarea rapidă a informațiilor.', tags: ['SEO', 'Performanță', 'Consulting', 'React'] },
+      { title: 'VP Trokenbau', category: 'Construcții', client: 'VP Trokenbau', description: 'Un site web profesional pentru o companie de construcții, prezentând servicii, proiecte și expertiză în industria construcțiilor.', tags: ['Construcții', 'Corporativ', 'React', 'Design Modern'] }
     ],
     ru: [
       { title: 'Vendi Imobiliare', category: 'Недвижимость', client: 'Vendi', description: 'Комплексный маркетплейс недвижимости, упрощающий процесс покупки и аренды жилья.', tags: ['Маркетплейс', 'Next.js', 'Карты', 'Недвижимость'] },
       { title: 'Chirie Auto', category: 'Авто', client: 'Chirie Auto MD', description: 'Динамичная платформа по аренде автомобилей. Пользователи могут просматривать автопарк и бронировать мгновенно.', tags: ['Бронирование', 'React', 'Авто', 'Mobile First'] },
       { title: 'Himalaya Salt', category: 'E-Commerce', client: 'Himalaya Salt MD', description: 'Элегантный интернет-магазин премиальных продуктов из гималайской соли.', tags: ['E-Commerce', 'Wellness', 'Бренд', 'Shopify'] },
       { title: 'LegalGrup', category: 'Корпоративный', client: 'LegalGrup SRL', description: 'Корпоративный сайт для ведущей юридической фирмы, укрепляющий авторитет и доверие.', tags: ['Корпоративный', 'Legal Tech', 'Multilingual', 'UI/UX'] },
-      { title: 'Servicii Juridice', category: 'Юр. Услуги', client: 'Servicii Juridice', description: 'Юридический портал, ориентированный на пользователя, для быстрого поиска информации.', tags: ['SEO', 'Performance', 'Консалтинг', 'React'] }
+      { title: 'Servicii Juridice', category: 'Юр. Услуги', client: 'Servicii Juridice', description: 'Юридический портал, ориентированный на пользователя, для быстрого поиска информации.', tags: ['SEO', 'Performance', 'Консалтинг', 'React'] },
+      { title: 'VP Trokenbau', category: 'Строительство', client: 'VP Trokenbau', description: 'Профессиональный сайт строительной компании, демонстрирующий услуги, проекты и экспертизу в строительной отрасли.', tags: ['Строительство', 'Корпоративный', 'React', 'Современный Дизайн'] }
     ]
   };
 
