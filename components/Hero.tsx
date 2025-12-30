@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useLanguage } from '../contexts/LanguageContext';
+import { ArrowRight, Sparkles } from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -12,6 +13,7 @@ const Hero: React.FC = () => {
   const lineRef = useRef<HTMLDivElement>(null);
   const blob1Ref = useRef<HTMLDivElement>(null);
   const blob2Ref = useRef<HTMLDivElement>(null);
+  const buttonsRef = useRef<HTMLDivElement>(null);
   const { t } = useLanguage();
 
   useEffect(() => {
@@ -36,7 +38,13 @@ const Hero: React.FC = () => {
         opacity: 0,
         duration: 0.8,
         ease: "power2.out"
-      }, "-=0.5");
+      }, "-=0.5")
+      .from(buttonsRef.current, {
+        y: 30,
+        opacity: 0,
+        duration: 0.8,
+        ease: "power2.out"
+      }, "-=0.3");
 
       // Parallax Effects
       // Move blobs at different speeds
@@ -104,14 +112,38 @@ const Hero: React.FC = () => {
             </p>
           </div>
 
-          <div className="mt-12 flex flex-wrap gap-4 relative z-20">
-             {/* Animated Scroll Indicator */}
-             <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-60">
-                <span className="text-xs uppercase tracking-widest">{t.hero.scroll}</span>
-                <div className="w-[1px] h-12 bg-white/20 overflow-hidden">
-                    <div className="w-full h-full bg-brand-bronze animate-scrolldown"></div>
-                </div>
-             </div>
+          <div ref={buttonsRef} className="mt-12 flex flex-wrap gap-4 relative z-20">
+            <a 
+              href="#contact" 
+              className="group relative px-8 py-4 bg-brand-bronze text-white font-bold rounded-xl hover:bg-amber-700 transition-all duration-300 flex items-center gap-2 shadow-lg shadow-brand-bronze/30 hover:shadow-brand-bronze/50 hover:scale-105"
+            >
+              <span>{t.hero.ctaPrimary}</span>
+              <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+              <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-brand-bronze to-amber-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10 blur-xl"></div>
+            </a>
+            
+            <a 
+              href="#portfolio" 
+              className="px-8 py-4 bg-white/5 backdrop-blur-sm border border-white/20 text-white font-semibold rounded-xl hover:bg-white/10 hover:border-white/30 transition-all duration-300 flex items-center gap-2"
+            >
+              <Sparkles size={18} />
+              <span>{t.hero.ctaSecondary}</span>
+            </a>
+            
+            <a 
+              href="#contact" 
+              className="px-8 py-4 text-gray-300 font-medium rounded-xl hover:text-white transition-colors duration-300 flex items-center gap-2 underline decoration-brand-bronze/50 hover:decoration-brand-bronze underline-offset-4"
+            >
+              {t.hero.ctaConsultation} →
+            </a>
+          </div>
+
+          {/* Animated Scroll Indicator */}
+          <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-60">
+            <span className="text-xs uppercase tracking-widest">{t.hero.scroll}</span>
+            <div className="w-[1px] h-12 bg-white/20 overflow-hidden">
+              <div className="w-full h-full bg-brand-bronze animate-scrolldown"></div>
+            </div>
           </div>
         </div>
       </div>

@@ -4,7 +4,9 @@ import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import TechStack from './components/TechStack';
 import Experience from './components/Experience';
+import SocialProof from './components/SocialProof';
 import Portfolio from './components/Portfolio';
+import FAQ from './components/FAQ';
 import Contact from './components/Contact';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { Lang } from './translations';
@@ -28,8 +30,10 @@ const MainLayout: React.FC<{ lang: Lang }> = ({ lang }) => {
         <main>
           <Hero />
           <TechStack />
+          <SocialProof />
           <Experience />
           <Portfolio />
+          <FAQ />
           <Contact />
         </main>
       </div>
