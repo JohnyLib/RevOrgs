@@ -167,6 +167,20 @@ RevOrgs Studio
 
 - [EmailJS Setup Guide](./EMAILJS_SETUP.md) - Configure email form submission
 - [Deployment Guide](./DEPLOY.md) - Detailed Vercel deployment instructions
+- [Logo Setup Guide](./LOGO_SETUP.md) - How to add your custom logo and change titles
+
+## 🎨 Customization
+
+### Adding Your Logo
+1. Place your logo file (`logo.png` or `logo.svg`) in the `/public` folder
+2. Open `components/RevOrgsLogo.tsx`
+3. Set `hasCustomLogo = true`
+4. See [LOGO_SETUP.md](./LOGO_SETUP.md) for detailed instructions
+
+### Changing Company Name/Title
+- Update text in `components/RevOrgsLogo.tsx` for navbar
+- Update hero titles in `translations.ts`
+- Update page title in `index.html`
 
 ---
 
