@@ -5,7 +5,7 @@ import { getPortfolio } from '../constants';
 import { Project } from '../types';
 import { ArrowUpRight, X, ChevronLeft, ChevronRight, Maximize2 } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
-import { getScreenshotUrl, getScreenshotGallery } from '../utils/screenshot';
+import { getScreenshotUrl, getScreenshotGallery, getPortfolioScreenshot } from '../utils/screenshot';
 import { shouldAnimate, isMobile } from '../utils/performance';
 import { getOptimizedImageUrl } from '../utils/imageOptimizer';
 
@@ -17,7 +17,7 @@ const PortfolioImage: React.FC<{
   className?: string;
   loading?: 'lazy' | 'eager';
 }> = ({ project, className = '', loading = 'lazy' }) => {
-  // Use optimized image URL
+  const imageRef = useRef<HTMLDivElement>(null);
   const [imageSrc, setImageSrc] = useState<string>(
     isMobile() 
       ? getOptimizedImageUrl(project.image, 800, 75) 
@@ -25,21 +25,57 @@ const PortfolioImage: React.FC<{
   );
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [hasError, setHasError] = useState<boolean>(false);
+  const [isVisible, setIsVisible] = useState<boolean>(loading === 'eager');
 
+  // Intersection Observer for lazy loading screenshots only when visible
   useEffect(() => {
-    // On mobile, skip screenshot loading for better performance
+    if (loading === 'eager' || isMobile() || !project.link) {
+      setIsVisible(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setIsVisible(true);
+            observer.disconnect();
+          }
+        });
+      },
+      { 
+        rootMargin: '50px', // Start loading 50px before image enters viewport
+        threshold: 0.01 
+      }
+    );
+
+    if (imageRef.current) {
+      observer.observe(imageRef.current);
+    }
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [loading, project.link]);
+
+  // Load real-time screenshot when visible
+  useEffect(() => {
+    if (!isVisible) return;
+
+    // On mobile, use optimized placeholder
     if (isMobile()) {
       setImageSrc(getOptimizedImageUrl(project.image, 800, 75));
       setIsLoading(false);
       return;
     }
 
-    // Try to load screenshot from original link (desktop only)
+    // Try to load high-quality screenshot from original link
     if (project.link) {
       setIsLoading(true);
       setHasError(false);
       
-      const screenshotUrl = getScreenshotUrl(project.link, 1200, 800);
+      // Use improved portfolio screenshot function with better quality
+      const screenshotUrl = getPortfolioScreenshot(project.link, 1280, 720);
       const img = new Image();
       let timeoutId: NodeJS.Timeout;
       let isMounted = true;
@@ -55,10 +91,7 @@ const PortfolioImage: React.FC<{
       img.onerror = () => {
         if (isMounted) {
           // Fallback to optimized original image if screenshot fails
-          const fallbackUrl = isMobile() 
-            ? getOptimizedImageUrl(project.image, 800, 75)
-            : project.image;
-          setImageSrc(fallbackUrl);
+          setImageSrc(project.image);
           setIsLoading(false);
           setHasError(true);
         }
@@ -67,17 +100,14 @@ const PortfolioImage: React.FC<{
       
       img.src = screenshotUrl;
       
-      // Timeout fallback after 2 seconds (reduced for better performance)
+      // Timeout fallback after 3 seconds (slightly increased for better quality)
       timeoutId = setTimeout(() => {
-        if (isMounted) {
-          const fallbackUrl = isMobile() 
-            ? getOptimizedImageUrl(project.image, 800, 75)
-            : project.image;
-          setImageSrc(fallbackUrl);
+        if (isMounted && isLoading) {
+          setImageSrc(project.image);
           setIsLoading(false);
           setHasError(true);
         }
-      }, 2000);
+      }, 3000);
       
       return () => {
         isMounted = false;
@@ -86,13 +116,16 @@ const PortfolioImage: React.FC<{
     } else {
       setIsLoading(false);
     }
-  }, [project.link, project.image]);
+  }, [project.link, project.image, isVisible]);
 
   return (
-    <>
+    <div ref={imageRef} className="relative w-full h-full">
       {isLoading && (
-        <div className="absolute inset-0 bg-gradient-to-br from-gray-200 to-gray-300 animate-pulse flex items-center justify-center">
-          <div className="text-gray-400 text-sm">Loading...</div>
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-200 via-gray-300 to-gray-200 animate-pulse flex items-center justify-center z-10">
+          <div className="flex flex-col items-center gap-2">
+            <div className="w-8 h-8 border-4 border-brand-bronze border-t-transparent rounded-full animate-spin"></div>
+            <div className="text-gray-500 text-xs font-medium">Loading live preview...</div>
+          </div>
         </div>
       )}
       <img 
@@ -101,7 +134,7 @@ const PortfolioImage: React.FC<{
         loading={loading}
         decoding="async"
         fetchpriority={loading === 'eager' ? 'high' : 'auto'}
-        className={`${className} ${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
+        className={`${className} ${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-500 w-full h-full object-cover`}
         onLoad={() => {
           // Use requestAnimationFrame to avoid forced reflow
           requestAnimationFrame(() => setIsLoading(false));
@@ -116,7 +149,7 @@ const PortfolioImage: React.FC<{
           }
         }}
       />
-    </>
+    </div>
   );
 };
 
@@ -353,11 +386,14 @@ const ProjectModal: React.FC<ModalProps> = ({ project, onClose }) => {
   const [imageLoading, setImageLoading] = useState<boolean>(true);
   const { t } = useLanguage();
 
-  // Generate real-time screenshots for gallery
+  // Generate real-time screenshots for gallery with multiple viewport sizes
   useEffect(() => {
-    if (project.link) {
+    if (project.link && !isMobile()) {
       setImageLoading(true);
-      const screenshotGallery = getScreenshotGallery(project.link, 3);
+      
+      // Get responsive screenshots for different viewports
+      const screenshotGallery = getScreenshotGallery(project.link);
+      
       // Combine screenshot URLs with fallback to original gallery
       const newGallery = screenshotGallery.length > 0 
         ? screenshotGallery.map((url, idx) => url || (project.gallery?.[idx] || project.image))
@@ -365,29 +401,50 @@ const ProjectModal: React.FC<ModalProps> = ({ project, onClose }) => {
       
       setGallery(newGallery);
       
-      // Preload first image
-      const img = new Image();
+      // Preload all images in parallel for better performance
+      let loadedCount = 0;
       let isMounted = true;
+      const imagesToLoad = newGallery.map((src) => {
+        const img = new Image();
+        img.src = src;
+        img.onload = () => {
+          if (!isMounted) return;
+          loadedCount++;
+          if (loadedCount === newGallery.length || loadedCount === 1) {
+            setImageLoading(false);
+          }
+        };
+        img.onerror = () => {
+          if (!isMounted) return;
+          loadedCount++;
+          if (loadedCount === newGallery.length) {
+            // Fallback to original gallery if all screenshots fail
+            setGallery(project.gallery || [project.image]);
+            setImageLoading(false);
+          }
+        };
+        return img;
+      });
       
-      img.onload = () => {
-        if (isMounted) {
-          setImageLoading(false);
-        }
-      };
-      
-      img.onerror = () => {
+      // Timeout fallback
+      const timeoutId = setTimeout(() => {
         if (isMounted) {
           setGallery(project.gallery || [project.image]);
           setImageLoading(false);
         }
-      };
-      
-      img.src = newGallery[0];
+      }, 4000);
       
       return () => {
         isMounted = false;
+        imagesToLoad.forEach(img => {
+          img.onload = null;
+          img.onerror = null;
+        });
+        clearTimeout(timeoutId);
       };
     } else {
+      // On mobile or no link, use original gallery
+      setGallery(project.gallery || [project.image]);
       setImageLoading(false);
     }
   }, [project.link, project.gallery, project.image]);
@@ -436,8 +493,11 @@ const ProjectModal: React.FC<ModalProps> = ({ project, onClose }) => {
         <div className="w-full md:w-2/3 bg-gray-100 relative h-[40vh] md:h-auto">
           <div className="absolute inset-0">
             {imageLoading && (
-              <div className="absolute inset-0 bg-gradient-to-br from-gray-200 to-gray-300 animate-pulse flex items-center justify-center z-10">
-                <div className="text-gray-400 text-sm">Loading screenshot...</div>
+              <div className="absolute inset-0 bg-gradient-to-br from-gray-200 via-gray-300 to-gray-200 animate-pulse flex items-center justify-center z-10">
+                <div className="flex flex-col items-center gap-2">
+                  <div className="w-8 h-8 border-4 border-brand-bronze border-t-transparent rounded-full animate-spin"></div>
+                  <div className="text-gray-500 text-xs font-medium">Loading live preview...</div>
+                </div>
               </div>
             )}
             <img 
@@ -445,7 +505,7 @@ const ProjectModal: React.FC<ModalProps> = ({ project, onClose }) => {
               alt={`${project.title} slide ${currentSlide + 1}`}
               loading="lazy"
               decoding="async"
-              className={`w-full h-full object-cover transition-opacity duration-300 ${imageLoading ? 'opacity-0' : 'opacity-100'}`}
+              className={`w-full h-full object-cover transition-opacity duration-500 ${imageLoading ? 'opacity-0' : 'opacity-100'}`}
               onLoad={() => {
                 requestAnimationFrame(() => setImageLoading(false));
               }}
