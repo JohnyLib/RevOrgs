@@ -117,13 +117,13 @@ const Contact: React.FC = () => {
                 <div className="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center group-hover:bg-brand-bronze group-hover:border-brand-bronze transition-all">
                   <Mail size={20} />
                 </div>
-                hello@revorgs.com
+                revorgs
               </a>
               <a href="mailto:perevalov.johny@gmail.com" className="flex items-center gap-4 text-xl text-gray-400 hover:text-brand-bronze transition-colors group">
                 <div className="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center group-hover:bg-brand-bronze group-hover:border-brand-bronze transition-all">
                   <Mail size={18} />
                 </div>
-                perevalov.johny2@gmail.com
+                perevalov.johny@gmail.com
               </a>
               <div className="flex items-center gap-4 text-xl text-gray-400">
                 <div className="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center">
